@@ -24,7 +24,7 @@ jobs:
     
     - name: Install mod
       run: |
-        go mod init Tour
+        go mod tidy
 
 
     - name: Build project
