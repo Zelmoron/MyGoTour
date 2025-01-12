@@ -7,6 +7,8 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/gofiber/fiber/v2/middleware/logger"
+	"github.com/gofiber/fiber/v2/middleware/recover"
 )
 
 type App struct {
@@ -34,7 +36,10 @@ func (a *App) routers() {
 		AllowOrigins:     "http://127.0.0.1:5500",
 		AllowHeaders:     "Origin, Content-Type, Accept, Authorization",
 		AllowCredentials: true,
-	}))
+	}), logger.New(), recover.New())
+
+	public := a.app.Group("")
+	public.Post("/registration", a.endpoints.Registration)
 
 }
 
