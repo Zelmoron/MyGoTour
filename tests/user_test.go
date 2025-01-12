@@ -17,6 +17,9 @@ type MockServices struct{}
 func (m *MockServices) Compilator() {
 
 }
+func (m *MockServices) Registration() {
+
+}
 func TestTest(t *testing.T) {
 	app := fiber.New()
 	mock := &MockServices{}

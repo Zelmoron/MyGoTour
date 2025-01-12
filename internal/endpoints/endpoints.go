@@ -2,15 +2,18 @@ package endpoints
 
 import (
 	"Tour/internal/requests"
+	"fmt"
 	"net/http"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
+	"github.com/sirupsen/logrus"
 )
 
 type (
 	Services interface {
 		Compilator()
+		Registration(requests.RegistrationRequest) error
 	}
 	Endpoints struct {
 		services Services
@@ -33,6 +36,7 @@ func (e *Endpoints) Registration(c *fiber.Ctx) error {
 	user := requests.RegistrationRequest{}
 
 	if err := c.BodyParser(&user); err != nil {
+		logrus.Error(fmt.Sprintf("Ошибка при получении данных %e", err))
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{
 			"status": "BadRequest - Request error",
 		})
@@ -40,10 +44,16 @@ func (e *Endpoints) Registration(c *fiber.Ctx) error {
 
 	validate := validator.New()
 	if err := validate.Struct(user); err != nil {
+		logrus.Error(fmt.Sprintf("Ошибка при валидации данных %e", err))
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{
 			"status": "BadRequest - Validation error",
 		})
 	}
+
+	logrus.Info(fmt.Sprintf("Данные получены %s", user))
+
+	_ = e.services.Registration(user)
+
 	return c.Status(http.StatusOK).JSON("")
 
 }

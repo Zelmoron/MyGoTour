@@ -22,11 +22,12 @@ func New() *App {
 
 	a := &App{}
 
-	db := repository.Connect()
+	db := repository.TestConnect()
 	a.repository = repository.New(db)
 	a.services = services.New(a.repository)
 	a.endpoints = endpoints.New(a.services)
 	a.app = fiber.New()
+	a.routers()
 
 	return a
 }
