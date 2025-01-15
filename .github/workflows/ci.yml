@@ -19,8 +19,11 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v3
       with:
-        go-version: '1.23.4'  
+        go-version: '1.23.4'
 
+    - name: Start Docker services
+      run: |
+        docker-compose -f docker-compose.test.yaml up -d
 
     - name: Install mod
       run: |
@@ -29,3 +32,9 @@ jobs:
     - name: Run tests
       run: |
         go test -v ./...
+
+    - name: Stop Docker services
+      if: always()
+      run: |
+        docker-compose -f docker-compose.test.yaml down -v
+ё
