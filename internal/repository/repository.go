@@ -2,18 +2,19 @@ package repository
 
 import (
 	"Tour/internal/requests"
-	"context"
 	"database/sql"
 	"fmt"
 	"os"
+	"sync"
 
-	"github.com/gofiber/fiber/v2/log"
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	_ "github.com/lib/pq"
 	"github.com/sirupsen/logrus"
 )
+
+var mu sync.Mutex
 
 type Repository struct {
 	db *sql.DB
@@ -42,6 +43,8 @@ func Connect() *sql.DB {
 	if err != nil {
 		logrus.Fatalf("Failed to create migration driver: %v", err)
 	}
+	db.SetMaxOpenConns(100)
+	db.SetMaxIdleConns(25)
 
 	m, err := migrate.NewWithDatabaseInstance(
 		"file://./migrations",
@@ -51,9 +54,13 @@ func Connect() *sql.DB {
 	}
 
 	// Поднять миграции
+	if err := m.Down(); err != nil && err != migrate.ErrNoChange {
+		logrus.Fatalf("Failed to apply migrations: %v", err)
+	}
 	if err := m.Up(); err != nil && err != migrate.ErrNoChange {
 		logrus.Fatalf("Failed to apply migrations: %v", err)
 	}
+
 	logrus.Info("Succes migrations")
 
 	// if err := m.Down(); err != nil && err != migrate.ErrNoChange {
@@ -82,12 +89,15 @@ func TestConnect() *sql.DB {
 	}
 
 	m, err := migrate.NewWithDatabaseInstance(
-		"file://./migrations",
+		"file://../migrations",
 		"postgres", driver)
 	if err != nil {
 		logrus.Fatalf("Failed to create migrate instance: %v", err)
 	}
-
+	// Поднять миграции
+	if err := m.Down(); err != nil && err != migrate.ErrNoChange {
+		logrus.Fatalf("Failed to apply migrations: %v", err)
+	}
 	// Поднять миграции
 	if err := m.Up(); err != nil && err != migrate.ErrNoChange {
 		logrus.Fatalf("Failed to apply migrations: %v", err)
@@ -101,42 +111,22 @@ func TestConnect() *sql.DB {
 	return db
 }
 
-func (r *Repository) SelectUser(ctx context.Context, ch1 chan<- bool, errChan chan bool, user requests.RegistrationRequest) {
+func (r *Repository) SelectUser(user requests.RegistrationRequest) error {
 
-	if user.Name == "err" {
-		errChan <- false
+	query := "SELECT id FROM users WHERE name = $1"
+	var id int
+	err := r.db.QueryRow(query, user.Name).Scan(&id)
 
-	}
-
-	select {
-	case <-ctx.Done():
-		log.Info("SelectUser прерван по контексту")
-		return
-	default:
-		if user.Name == "A" {
-			log.Info("Запись ch1 - false")
-			ch1 <- false
-		} else {
-			log.Info("Запись ch1 - true")
-			ch1 <- true
-		}
-	}
+	return err
 
 }
 
-func (r *Repository) InsertUser(ctx context.Context, ch1 <-chan bool, ch2 chan<- bool, errChan chan bool, user requests.RegistrationRequest) {
+func (r *Repository) InsertUser(user requests.RegistrationRequest) error {
 
-	select {
-	case <-ctx.Done():
-		log.Info("InsertUser прерван по контексту")
-		return
-	case flag := <-ch1:
-		if flag {
-			log.Info("Запись ch2 - true")
-			ch2 <- true
-		} else {
-			log.Info("Запись ch2 - false")
-			ch2 <- false
-		}
-	}
+	query := "INSERT INTO users(name,password) VALUES($1,$2) "
+
+	_, err := r.db.Exec(query, user.Name, user.Password)
+
+	return err
+
 }

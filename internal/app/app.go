@@ -22,7 +22,7 @@ func New() *App {
 
 	a := &App{}
 
-	db := repository.TestConnect()
+	db := repository.Connect()
 	a.repository = repository.New(db)
 	a.services = services.New(a.repository)
 	a.endpoints = endpoints.New(a.services)

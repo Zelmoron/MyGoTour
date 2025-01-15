@@ -11,6 +11,7 @@ func init() {
 	err := godotenv.Load()
 	if err != nil {
 		logrus.Error("Error loading .env file")
+
 	}
 }
 func main() {

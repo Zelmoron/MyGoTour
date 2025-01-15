@@ -36,7 +36,7 @@ func (e *Endpoints) Registration(c *fiber.Ctx) error {
 	user := requests.RegistrationRequest{}
 
 	if err := c.BodyParser(&user); err != nil {
-		logrus.Error(fmt.Sprintf("Ошибка при получении данных %e", err))
+		logrus.Error(fmt.Sprintf("Ошибка при получении данных %v", err))
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{
 			"status": "BadRequest - Request error",
 		})
@@ -44,7 +44,7 @@ func (e *Endpoints) Registration(c *fiber.Ctx) error {
 
 	validate := validator.New()
 	if err := validate.Struct(user); err != nil {
-		logrus.Error(fmt.Sprintf("Ошибка при валидации данных %e", err))
+		logrus.Error(fmt.Sprintf("Ошибка при валидации данных %v", err))
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{
 			"status": "BadRequest - Validation error",
 		})
@@ -52,8 +52,15 @@ func (e *Endpoints) Registration(c *fiber.Ctx) error {
 
 	logrus.Info(fmt.Sprintf("Данные получены %s", user))
 
-	_ = e.services.Registration(user)
+	err := e.services.Registration(user)
+	if err != nil {
+		return c.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"status": "BadRequest - Registration error",
+		})
+	}
 
-	return c.Status(http.StatusOK).JSON("")
+	return c.Status(http.StatusOK).JSON(fiber.Map{
+		"status": "OK - Registration success",
+	})
 
 }
