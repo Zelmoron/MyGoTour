@@ -14,6 +14,7 @@ type (
 	Services interface {
 		Compilator()
 		Registration(requests.RegistrationRequest) error
+		Login(requests.LoginRequest) error
 	}
 	Endpoints struct {
 		services Services
@@ -63,4 +64,27 @@ func (e *Endpoints) Registration(c *fiber.Ctx) error {
 		"status": "OK - Registration success",
 	})
 
+}
+
+func (e *Endpoints) Login(c *fiber.Ctx) error {
+	user := requests.LoginRequest{}
+
+	if err := c.BodyParser(&user); err != nil {
+		logrus.Error(fmt.Sprintf("Ошибка при получении данных %v", err))
+		return c.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"status": "BadRequest - Request error",
+		})
+	}
+
+	validate := validator.New()
+	if err := validate.Struct(user); err != nil {
+		logrus.Error(fmt.Sprintf("Ошибка при валидации данных %v", err))
+		return c.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"status": "BadRequest - Validation error",
+		})
+	}
+
+	return c.Status(http.StatusOK).JSON(fiber.Map{
+		"status": "OK - Login success",
+	})
 }

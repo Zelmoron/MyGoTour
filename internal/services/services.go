@@ -38,3 +38,7 @@ func (s *Services) Registration(user requests.RegistrationRequest) error {
 	return nil
 
 }
+
+func (s *Services) Login(user requests.LoginRequest) error {
+	return nil
+}

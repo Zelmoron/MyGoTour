@@ -18,6 +18,10 @@ import (
 
 type MockServices struct{}
 
+func (m *MockServices) Login(requests.LoginRequest) error {
+	return nil
+}
+
 func (m *MockServices) Compilator() {
 
 }
