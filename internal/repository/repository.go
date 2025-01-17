@@ -43,8 +43,8 @@ func Connect() *sql.DB {
 	if err != nil {
 		logrus.Fatalf("Failed to create migration driver: %v", err)
 	}
-	db.SetMaxOpenConns(100)
-	db.SetMaxIdleConns(25)
+	db.SetMaxOpenConns(90)
+	db.SetMaxIdleConns(45)
 
 	m, err := migrate.NewWithDatabaseInstance(
 		"file://./migrations",
