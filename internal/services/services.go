@@ -40,5 +40,9 @@ func (s *Services) Registration(user requests.RegistrationRequest) error {
 }
 
 func (s *Services) Login(user requests.LoginRequest) error {
+	if user.Name == "1" {
+		return errors.New("d")
+	}
+	// "дописать"
 	return nil
 }

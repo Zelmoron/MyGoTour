@@ -84,6 +84,7 @@ func (e *Endpoints) Login(c *fiber.Ctx) error {
 		})
 	}
 
+	e.services.Login(user)
 	return c.Status(http.StatusOK).JSON(fiber.Map{
 		"status": "OK - Login success",
 	})
