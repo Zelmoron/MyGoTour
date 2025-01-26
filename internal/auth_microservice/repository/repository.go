@@ -2,6 +2,7 @@ package repository
 
 import (
 	"Tour/internal/auth_microservice/requests"
+	"context"
 	"database/sql"
 	"fmt"
 	"os"
@@ -11,6 +12,7 @@ import (
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
+	"github.com/lib/pq"
 	_ "github.com/lib/pq"
 	"github.com/sirupsen/logrus"
 )
@@ -44,9 +46,9 @@ func Connect() *sql.DB {
 	if err != nil {
 		logrus.Fatalf("Failed to create migration driver: %v", err)
 	}
-	db.SetMaxOpenConns(50)                  // Уменьши количество открытых соединений на один сервис
-	db.SetMaxIdleConns(25)                  // Настрой количество неактивных соединений
-	db.SetConnMaxLifetime(30 * time.Second) // Ограничь время жизни соединения
+	db.SetMaxOpenConns(60)
+	db.SetMaxIdleConns(30)
+	db.SetConnMaxLifetime(15 * time.Second)
 
 	m, err := migrate.NewWithDatabaseInstance(
 		"file://./migrations",
@@ -124,11 +126,18 @@ func (r *Repository) SelectUser(user requests.RegistrationRequest) error {
 }
 
 func (r *Repository) InsertUser(user requests.RegistrationRequest) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
+	query := "INSERT INTO users(name, password) VALUES($1, $2) ON CONFLICT (name) DO NOTHING"
+	_, err := r.db.ExecContext(ctx, query, user.Name, user.Password)
 
-	query := "INSERT INTO users(name,password) VALUES($1,$2) "
+	if err != nil {
+		if pqErr, ok := err.(*pq.Error); ok && pqErr.Code == "23505" {
+			return fmt.Errorf("пользователь с таким именем уже существует: %s", user.Name)
+		}
+		return err
+	}
 
-	_, err := r.db.Exec(query, user.Name, user.Password)
-
-	return err
+	return nil
 
 }

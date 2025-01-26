@@ -39,6 +39,7 @@ func (a *App) routers() {
 		AllowHeaders:     "Origin, Content-Type, Accept, Authorization",
 		AllowCredentials: true,
 	}), logger.New(), recover.New())
+
 	a.app.Post("/auth/registration", a.endpoints.Registration)
 
 }

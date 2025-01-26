@@ -34,7 +34,7 @@ func (s *Services) Registration(user requests.RegistrationRequest) error {
 		return errors.New("не удалось зарегистрировать пользователя")
 	}
 
-	logrus.Info("Регистрация успешна - ", user)
+	// logrus.Info("Регистрация успешна - ", user)
 	return nil
 
 }
