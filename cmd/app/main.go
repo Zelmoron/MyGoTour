@@ -1,7 +1,7 @@
 package main
 
 import (
-	"Tour/internal/app"
+	"Tour/internal/auth_microservice/app"
 
 	"github.com/joho/godotenv"
 	"github.com/sirupsen/logrus"

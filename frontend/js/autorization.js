@@ -18,7 +18,7 @@ async function handleSubmit(event, type) {
 
     try {
         const endpoint = type === 'login' ? '/login' : '/registration';
-        const response = await fetch(`http://localhost:8080${endpoint}`, {
+        const response = await fetch(`http://localhost:8080/auth${endpoint}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

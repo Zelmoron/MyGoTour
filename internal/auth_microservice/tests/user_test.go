@@ -1,10 +1,10 @@
 package tests
 
 import (
-	"Tour/internal/endpoints"
-	"Tour/internal/repository"
-	"Tour/internal/requests"
-	"Tour/internal/services"
+	"Tour/internal/auth_microservice/endpoints"
+	"Tour/internal/auth_microservice/repository"
+	"Tour/internal/auth_microservice/requests"
+	"Tour/internal/auth_microservice/services"
 	"bytes"
 	"encoding/json"
 	"net/http"

@@ -1,7 +1,7 @@
 package repository
 
 import (
-	"Tour/internal/requests"
+	"Tour/internal/auth_microservice/requests"
 	"database/sql"
 	"fmt"
 	"os"

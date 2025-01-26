@@ -1,7 +1,7 @@
 package endpoints
 
 import (
-	"Tour/internal/requests"
+	"Tour/internal/auth_microservice/requests"
 	"fmt"
 	"net/http"
 

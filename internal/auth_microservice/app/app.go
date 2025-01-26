@@ -1,14 +1,13 @@
 package app
 
 import (
-	"Tour/internal/endpoints"
-	"Tour/internal/repository"
-	"Tour/internal/services"
+	"Tour/internal/auth_microservice/endpoints"
+	"Tour/internal/auth_microservice/repository"
+	"Tour/internal/auth_microservice/services"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
-	"github.com/gofiber/fiber/v2/middleware/monitor"
 	"github.com/gofiber/fiber/v2/middleware/recover"
 )
 
@@ -40,13 +39,10 @@ func (a *App) routers() {
 		AllowHeaders:     "Origin, Content-Type, Accept, Authorization",
 		AllowCredentials: true,
 	}), logger.New(), recover.New())
-
-	a.app.Get("/metrics", monitor.New())
-	public := a.app.Group("")
-	public.Post("/registration", a.endpoints.Registration)
+	a.app.Post("/auth/registration", a.endpoints.Registration)
 
 }
 
 func (a *App) Run() {
-	a.app.Listen(":8080")
+	a.app.Listen(":8081")
 }
