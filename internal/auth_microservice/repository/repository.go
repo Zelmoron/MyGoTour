@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"sync"
+	"time"
 
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/postgres"
@@ -43,8 +44,9 @@ func Connect() *sql.DB {
 	if err != nil {
 		logrus.Fatalf("Failed to create migration driver: %v", err)
 	}
-	db.SetMaxOpenConns(90)
-	db.SetMaxIdleConns(45)
+	db.SetMaxOpenConns(50)                  // Уменьши количество открытых соединений на один сервис
+	db.SetMaxIdleConns(25)                  // Настрой количество неактивных соединений
+	db.SetConnMaxLifetime(30 * time.Second) // Ограничь время жизни соединения
 
 	m, err := migrate.NewWithDatabaseInstance(
 		"file://./migrations",
