@@ -89,7 +89,7 @@ func TestConnect() *sql.DB {
 	}
 
 	m, err := migrate.NewWithDatabaseInstance(
-		"file://../migrations",
+		"file:///home/igor/Projects/GoTour/migrations",
 		"postgres", driver)
 	if err != nil {
 		logrus.Fatalf("Failed to create migrate instance: %v", err)
