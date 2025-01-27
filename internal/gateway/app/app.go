@@ -2,11 +2,9 @@ package app
 
 import (
 	"log"
-	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
-	"github.com/gofiber/fiber/v2/middleware/limiter"
 	"github.com/gofiber/fiber/v2/middleware/proxy"
 )
 
@@ -30,10 +28,6 @@ func (a *App) router() {
 
 	// a.app.Use(logger.New())
 	// a.app.Use(recover.New())
-	a.app.Use(limiter.New(limiter.Config{
-		Max:        1000,            // Максимум 100 запросов
-		Expiration: 1 * time.Second, // За 30 секунд
-	}))
 
 	// Прокси маршруты
 	a.app.Post("/auth/*", func(c *fiber.Ctx) error {
