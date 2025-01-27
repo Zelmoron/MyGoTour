@@ -2,6 +2,7 @@ package app
 
 import (
 	"log"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
@@ -14,7 +15,12 @@ type App struct {
 
 func New() *App {
 	a := &App{}
-	a.app = fiber.New()
+	a.app = fiber.New(fiber.Config{
+		Prefork:      true,
+		ReadTimeout:  10 * time.Second,
+		WriteTimeout: 10 * time.Second,
+		IdleTimeout:  15 * time.Second,
+	})
 	a.router()
 	return a
 }
