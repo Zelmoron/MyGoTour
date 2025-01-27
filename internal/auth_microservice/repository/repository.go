@@ -128,7 +128,7 @@ func (r *Repository) SelectUser(user requests.RegistrationRequest) error {
 func (r *Repository) InsertUser(user requests.RegistrationRequest) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
 	defer cancel()
-	query := "INSERT INTO users(name, password) VALUES($1, $2) ON CONFLICT (name) DO NOTHING"
+	query := "INSERT INTO users(name, password) VALUES($1, $2)"
 	_, err := r.db.ExecContext(ctx, query, user.Name, user.Password)
 
 	if err != nil {
