@@ -1,7 +1,7 @@
 package repository
 
 import (
-	"Tour/internal/auth_microservice/requests"
+	"Tour/internal/requests"
 	"context"
 	"database/sql"
 	"fmt"
@@ -124,6 +124,8 @@ func (r *Repository) SelectUser(user requests.RegistrationRequest) error {
 	return err
 
 }
+
+// prepare
 
 func (r *Repository) InsertUser(user requests.RegistrationRequest) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)

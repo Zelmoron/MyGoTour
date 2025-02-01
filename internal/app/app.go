@@ -1,9 +1,9 @@
 package app
 
 import (
-	"Tour/internal/auth_microservice/endpoints"
-	"Tour/internal/auth_microservice/repository"
-	"Tour/internal/auth_microservice/services"
+	"Tour/internal/endpoints"
+	"Tour/internal/repository"
+	"Tour/internal/services"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"

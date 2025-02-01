@@ -1,7 +1,7 @@
 package services
 
 import (
-	"Tour/internal/auth_microservice/requests"
+	"Tour/internal/requests"
 	"errors"
 
 	"github.com/sirupsen/logrus"

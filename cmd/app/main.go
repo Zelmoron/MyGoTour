@@ -1,8 +1,7 @@
 package main
 
 import (
-	auth "Tour/internal/auth_microservice/app"
-	gate "Tour/internal/gateway/app"
+	"Tour/internal/app"
 
 	"github.com/joho/godotenv"
 	"github.com/sirupsen/logrus"
@@ -16,9 +15,6 @@ func init() {
 	}
 }
 func main() {
-	auth := auth.New()
-	gate := gate.New()
-
-	go auth.Run()
-	gate.Run()
+	app := app.New()
+	app.Run()
 }
